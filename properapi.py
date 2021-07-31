@@ -3,14 +3,13 @@ from bs4 import BeautifulSoup
 import requests
 import unicodedata
 
-
-
-
 num = 1    
+barrio= 'palermo'
+inmueble= 'departamento'
+tipo = 'alquiler'
 
-
-def pagina(num):
-    url = "https://www.properati.com.ar/s/palermo/departamento/alquiler?page="+ str(num)
+def pagina(num, barrio, inmueble, tipo):
+    url = "https://www.properati.com.ar/s/" + barrio+"/" + inmueble + "/"+ tipo + "?page="+ str(num)
     response = requests.get(url)
     response.encoding = "utf-8"
     html = response.text
@@ -20,7 +19,7 @@ def pagina(num):
     return fin,dom
 
 
-fin, dom = pagina(1)
+fin, dom = pagina(1, barrio, inmueble, tipo)
 #print(fin.text)
 id = 1
 propiedad =[]
@@ -49,8 +48,10 @@ while fin != None:
                 if (txt.find('m²')>=0): m2 = txt
                 if (txt.find('ambiente')>=0): ambientes = txt
                 if (txt.find('baño')>=0): banios = txt
+        valor = {'id': id, 'precio': precio, 'expensas': expensas, 'm2': m2}
+        propiedad.append(valor)
         id= id+1
-    print(num, fin)
+    #print(num, fin)
     num= num + 1            
-    fin, dom= pagina(num)
+    fin, dom= pagina(num, barrio, inmueble, tipo)
     
