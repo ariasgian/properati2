@@ -4,6 +4,11 @@ import requests
 import unicodedata
 from flask import Flask, json, request
 import json
+import settings
+from os import environ
+
+PORT = environ["PORT"]
+FLASK_ENV = environ["FLASK_ENV"]
 
 
 def pagina(num, barrio, inmueble, tipo):
@@ -65,7 +70,7 @@ def scrapeo(barrio,inmueble,tipo, limite):
 
 if __name__== "__main__":
     if FLASK_ENV == "development":
-        app.run( port = 3030, host='0.0.0.0' )
+         app.run( port = 3030, host='0.0.0.0' )
     else:
         app.run( port= 3030 )
 
