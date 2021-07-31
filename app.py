@@ -23,7 +23,9 @@ def pagina(num, barrio, inmueble, tipo):
 
 
 app = Flask(__name__)
-
+@app.route("/")
+def inicio():
+    return  "iniciaste"
 
 @app.route("/<barrio>/<inmueble>/<tipo>/<limite>")
 def scrapeo(barrio,inmueble,tipo, limite):
