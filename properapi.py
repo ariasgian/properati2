@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import unicodedata
 from flask import Flask, json, request
+import json
 
 
 def pagina(num, barrio, inmueble, tipo):
@@ -19,11 +20,45 @@ def pagina(num, barrio, inmueble, tipo):
 app = Flask(__name__)
 
 
-@app.route("/<barrio>/<inmueble>/<tipo>")
-def scrapeo(barrio,inmueble,tipo):
-    fin , dom =pagina(1,barrio, inmueble, tipo)
-    print(dom)
-    return "hola"
+@app.route("/<barrio>/<inmueble>/<tipo>/<limite>")
+def scrapeo(barrio,inmueble,tipo, limite):
+    fin, dom = pagina(1, barrio, inmueble, tipo)
+    #print(fin.text)
+    id = 1
+    num=1
+    propiedad =[]
+    while fin != None:
+        anuncios = dom.find_all( attrs = { 'class' : 'StyledCard-n9541a-1 jWSYcc' } )
+        for anuncio in anuncios:
+                    
+            titulo = anuncio.find( attrs = { 'class' : 'StyledTitle-n9541a-4 bwJAej' } )
+            precio = anuncio.find( attrs = { 'class' : 'StyledPrice-sc-1wixp9h-0 bZCCaW' } )
+            expensas = anuncio.find( attrs = { 'class' : 'StyledMaintenanceFees-n9541a-6 cRsmn' } )
+            detalles = anuncio.find( attrs = { 'class' : 'StyledInfoIcons-n9541a-9 fgcFIO' } )
+            inmobiliaria = anuncio.find( attrs = { 'class' : 'seller-name' } )
+            
+            if titulo: titulo = titulo.get_text()
+            if precio: precio= precio.get_text()
+            if expensas: expensas = unicodedata.normalize("NFKD", expensas.get_text()) 
+            if inmobiliaria: imobiliaria = inmobiliaria.get_text()
+            if detalles:
+                spans = detalles.find_all('span')
+                for span in spans:
+                    txt = span.get_text()
+                    if (txt.find('m²')>=0): m2 = txt
+                    if (txt.find('ambiente')>=0): ambientes = txt
+                    if (txt.find('baño')>=0): banios = txt
+            valor = {'id': id, 'precio': precio, 'expensas': expensas, 'm2': m2, 'baños': banios, 'inmobiliaria':imobiliaria}
+            propiedad.append(valor)
+            id= id+1
+        #print(num, fin)
+        num= num + 1            
+        fin, dom= pagina(num, barrio, inmueble, tipo)
+    
+    result= propiedad[:int(limite)]     
+    print(propiedad)
+    return app.response_class(response = json.dumps(result), status = 200, mimetype = "application/json", )
+
 
 
 
