@@ -1,6 +1,7 @@
 # https://127.0.0.1:3030/api/BARRIO/INMUEBLE/TIPO
 
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
+import beautifulsoup4 as BeautifulSoup
 import requests
 import unicodedata
 from flask import Flask, json, request
