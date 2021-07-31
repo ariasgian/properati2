@@ -1,4 +1,5 @@
 # https://127.0.0.1:3030/api/BARRIO/INMUEBLE/TIPO
+!pip install bs4
 from bs4 import BeautifulSoup
 import requests
 import unicodedata
